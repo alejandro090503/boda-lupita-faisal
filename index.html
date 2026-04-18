@@ -59,7 +59,7 @@ body{
 }
 
 /* ── PETALS ── */
-#petals{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
+#petals{position:fixed;inset:0;z-index:20;pointer-events:none;overflow:hidden}
 .petal{position:absolute;border-radius:50% 0 50% 0;top:-40px}
 
 /* ── WRAP ── */
@@ -1008,7 +1008,7 @@ gsap.registerPlugin(ScrollTrigger);
     ].join(';');
     wrap.appendChild(p);
 
-    const dur = 20 + Math.random() * 22;
+    const dur = 50 + Math.random() * 35;
     gsap.fromTo(p,
       { y: -40, rotation: Math.random() * 360, x: 0 },
       {
