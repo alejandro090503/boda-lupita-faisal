@@ -943,13 +943,12 @@ body{
 </div><!-- /.wrap -->
 
 <!-- ── MUSIC FAB ── -->
-<button class="music-fab" id="musicFab" aria-label="Reproducir música de fondo" title="Alicia Keys — No One">
+<button class="music-fab" id="musicFab" aria-label="Reproducir música de fondo" title="Alicia Keys — If I Ain't Got You">
   <svg class="ic-play" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
   <svg class="ic-pause" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
 </button>
-<!-- Audio: agregar src cuando el cliente entregue el archivo -->
-<audio id="bgAudio" loop preload="none">
-  <!-- <source src="audio.mp3" type="audio/mpeg"> -->
+<audio id="bgAudio" loop preload="auto">
+  <source src="audio.mp3" type="audio/mpeg">
 </audio>
 
 <!-- ── SCRIPTS ── -->
@@ -1051,14 +1050,33 @@ gsap.registerPlugin(ScrollTrigger);
 
 /* ─────────────── MUSIC FAB ─────────────── */
 (function initFab(){
-  const audio = document.getElementById('bgAudio');
-  const fab   = document.getElementById('musicFab');
+  const audio   = document.getElementById('bgAudio');
+  const fab     = document.getElementById('musicFab');
+  audio.volume  = 0.35;
 
-  fab.addEventListener('click', () => {
-    const hasSrc = audio.querySelector('source');
-    if (!hasSrc){ fab.classList.toggle('playing'); return; }
+  function tryPlay(){
+    audio.play()
+      .then(() => fab.classList.add('playing'))
+      .catch(() => {
+        /* Autoplay bloqueado por el navegador — se activa con el primer toque */
+        fab.classList.remove('playing');
+        const unlock = () => {
+          audio.play().then(() => fab.classList.add('playing')).catch(() => {});
+          document.removeEventListener('touchstart', unlock);
+          document.removeEventListener('click', unlock);
+        };
+        document.addEventListener('touchstart', unlock, { once: true });
+        document.addEventListener('click',      unlock, { once: true });
+      });
+  }
+
+  /* Intentar autoplay en cuanto el loader termina (initAll lo llama) */
+  window._startAudio = tryPlay;
+
+  fab.addEventListener('click', e => {
+    e.stopPropagation();
     if (audio.paused){ audio.play().then(() => fab.classList.add('playing')).catch(() => {}); }
-    else              { audio.pause(); fab.classList.remove('playing'); }
+    else             { audio.pause(); fab.classList.remove('playing'); }
   });
 })();
 
@@ -1157,6 +1175,9 @@ function initAll(){
   });
 
   ScrollTrigger.refresh();
+
+  /* Autoplay música al terminar el loader */
+  if (typeof window._startAudio === 'function') window._startAudio();
 }
 </script>
 </body>
