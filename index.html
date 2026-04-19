@@ -163,21 +163,15 @@ body{
 }
 
 /* ── FECHA ── */
-#fecha{padding:52px 28px;background:var(--bg);text-align:center}
-.fecha-row{
-  display:flex;align-items:center;justify-content:center;gap:14px;
-}
-.fecha-rule{height:1px;flex:1;max-width:72px}
-.fecha-rule--l{background:linear-gradient(to right,var(--accent),transparent)}
-.fecha-rule--r{background:linear-gradient(to left,var(--accent),transparent)}
-.fecha-txt{
-  font-family:'Cormorant Garamond',serif;
-  font-size:16px;
-  letter-spacing:7px;
-  text-transform:uppercase;
-  color:var(--dark);
-  white-space:nowrap;
-}
+#fecha{padding:48px 28px;background:var(--bg);text-align:center}
+.fecha-block{display:inline-flex;flex-direction:column;align-items:center;gap:10px}
+.fecha-vline{width:1px;height:24px;background:linear-gradient(to bottom,transparent,var(--accent),transparent)}
+.fecha-label{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:13px;letter-spacing:5px;text-transform:uppercase;color:var(--accent)}
+.fecha-row{display:flex;align-items:center;gap:14px}
+.fecha-rule{display:block;width:38px;height:1px;flex-shrink:0}
+.fecha-rule--l{background:linear-gradient(to right,transparent,var(--accent))}
+.fecha-rule--r{background:linear-gradient(to left,transparent,var(--accent))}
+.fecha-main{font-family:'Cormorant Garamond',serif;font-size:18px;letter-spacing:4px;text-transform:uppercase;color:var(--dark);white-space:nowrap}
 
 /* ── SECTION FADES (top & bottom blur) ── */
 #countdown,#ubicacion,#dresscode{
@@ -615,7 +609,6 @@ body{
       <span class="hero-bride rv">Lupita</span>
       <span class="hero-amp rv">&amp;</span>
       <span class="hero-groom rv">Faisal</span>
-      <span class="hero-date rv">25 &middot; 07 &middot; MMXXVI</span>
     </div>
   </section>
 
@@ -653,10 +646,15 @@ body{
 
   <!-- ── 3. FECHA ── -->
   <section id="fecha">
-    <div class="fecha-row rv">
-      <div class="fecha-rule fecha-rule--l"></div>
-      <span class="fecha-txt">Sábado &middot; 25 &middot; Julio &middot; MMXXVI</span>
-      <div class="fecha-rule fecha-rule--r"></div>
+    <div class="fecha-block rv">
+      <div class="fecha-vline"></div>
+      <p class="fecha-label">Sábado</p>
+      <div class="fecha-row">
+        <span class="fecha-rule fecha-rule--l"></span>
+        <span class="fecha-main">25 &middot; Julio &middot; MMXXVI</span>
+        <span class="fecha-rule fecha-rule--r"></span>
+      </div>
+      <div class="fecha-vline"></div>
     </div>
   </section>
 
