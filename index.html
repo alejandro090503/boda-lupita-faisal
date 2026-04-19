@@ -489,31 +489,62 @@ body{
   text-align:center;
 }
 
-/* ── GALLERY CROSSFADE ── */
-#sgal{height:300vh}
-#gal-overlay{
-  position:fixed;inset:0;
-  z-index:16;
-  opacity:0;
-  pointer-events:none;
-  background:var(--bg);
+/* ── GALERÍA CARRUSEL ── */
+#galeria{padding:72px 28px;background:var(--bg);text-align:center}
+.gal-wrap{position:relative;margin-top:32px}
+.gal-carousel{
+  position:relative;overflow:hidden;
+  border-radius:28px;
+  aspect-ratio:4/5;
+  box-shadow:0 16px 56px rgba(107,78,122,.22);
+  cursor:grab;
+  user-select:none;
 }
-.gal-img{
+.gal-carousel:active{cursor:grabbing}
+.gal-slide{
   position:absolute;inset:0;
+  opacity:0;
+  transition:opacity .85s cubic-bezier(.4,0,.2,1);
+  pointer-events:none;
+}
+.gal-slide.active{opacity:1;pointer-events:auto}
+.gal-slide img{
   width:100%;height:100%;
-  object-fit:cover;object-position:center;
-  will-change:opacity;
+  object-fit:cover;object-position:center top;
+  display:block;
+  pointer-events:none;
 }
-.cf-fade-t{
-  position:absolute;top:0;left:0;right:0;height:22%;
-  background:linear-gradient(to bottom,#F7F4F0,transparent);
-  z-index:10;pointer-events:none;
+.gal-vignette{
+  position:absolute;inset:0;
+  background:linear-gradient(to top,rgba(45,31,42,.28) 0%,transparent 55%);
+  pointer-events:none;
 }
-.cf-fade-b{
-  position:absolute;bottom:0;left:0;right:0;height:22%;
-  background:linear-gradient(to top,#F7F4F0,transparent);
-  z-index:10;pointer-events:none;
+.gal-btn{
+  position:absolute;top:50%;transform:translateY(-50%);
+  width:42px;height:42px;border-radius:50%;
+  background:rgba(255,255,255,.72);
+  border:none;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  backdrop-filter:blur(6px);
+  z-index:10;
+  transition:background .2s,transform .2s;
+  -webkit-backdrop-filter:blur(6px);
 }
+.gal-btn:hover{background:rgba(255,255,255,.95);transform:translateY(-50%) scale(1.08)}
+.gal-btn svg{width:18px;height:18px;stroke:var(--dark);stroke-width:2.2;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.gal-prev{left:14px}
+.gal-next{right:14px}
+.gal-dots{
+  display:flex;justify-content:center;align-items:center;
+  gap:8px;margin-top:20px;
+}
+.gal-dot{
+  width:7px;height:7px;border-radius:4px;
+  background:var(--accent);opacity:.28;
+  transition:all .4s cubic-bezier(.4,0,.2,1);
+  cursor:pointer;border:none;padding:0;
+}
+.gal-dot.active{opacity:1;width:22px}
 
 /* ── RSVP ── */
 #rsvp{padding:72px 28px;background:var(--bg);text-align:center}
@@ -939,8 +970,38 @@ body{
     <p class="dc-avoid rv">Evitar: Blanco &middot; Beige &middot; Rojo &mdash; reservados para los novios</p>
   </section>
 
-  <!-- ── 13. GALERÍA CROSSFADE (spacer; overlay fixed fuera del .wrap) ── -->
-  <div id="sgal"></div>
+  <!-- ── 13. GALERÍA CARRUSEL ── -->
+  <section id="galeria">
+    <p class="eyebrow rv">Nosotros</p>
+    <h2 class="script-title rv">Nuestra Historia</h2>
+    <div class="gal-wrap rv">
+      <div class="gal-carousel" id="galCarousel">
+        <div class="gal-slide active">
+          <img src="foto1.jpg" alt="Lupita &amp; Faisal">
+          <div class="gal-vignette"></div>
+        </div>
+        <div class="gal-slide">
+          <img src="foto2.jpg" alt="Lupita &amp; Faisal">
+          <div class="gal-vignette"></div>
+        </div>
+        <div class="gal-slide">
+          <img src="foto3.jpg" alt="Lupita &amp; Faisal">
+          <div class="gal-vignette"></div>
+        </div>
+        <button class="gal-btn gal-prev" aria-label="Anterior">
+          <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+        </button>
+        <button class="gal-btn gal-next" aria-label="Siguiente">
+          <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+        </button>
+      </div>
+      <div class="gal-dots">
+        <button class="gal-dot active" aria-label="Foto 1"></button>
+        <button class="gal-dot" aria-label="Foto 2"></button>
+        <button class="gal-dot" aria-label="Foto 3"></button>
+      </div>
+    </div>
+  </section>
 
   <!-- ── ORNAMENTO B ── -->
   <div class="ornament rv">
@@ -1001,15 +1062,6 @@ body{
   </footer>
 
 </div><!-- /.wrap -->
-
-<!-- ── GALERÍA OVERLAY (fixed, fuera del .wrap) ── -->
-<div id="gal-overlay">
-  <img class="gal-img" id="cfImg1" src="foto1.jpg" alt="Foto de los novios 1" style="opacity:1">
-  <img class="gal-img" id="cfImg2" src="foto2.jpg" alt="Foto de los novios 2" style="opacity:0">
-  <img class="gal-img" id="cfImg3" src="foto3.jpg" alt="Foto de los novios 3" style="opacity:0">
-  <div class="cf-fade-t"></div>
-  <div class="cf-fade-b"></div>
-</div>
 
 <!-- ── MUSIC FAB ── -->
 <button class="music-fab" id="musicFab" aria-label="Reproducir música de fondo" title="Alicia Keys — If I Ain't Got You">
@@ -1303,34 +1355,42 @@ function initAll(){
     );
   });
 
-  /* ── Galería crossfade (scroll directo sobre overlay fixed) ── */
-  (function initGallery(){
-    const sgal    = document.getElementById('sgal');
-    const overlay = document.getElementById('gal-overlay');
-    const img1    = document.getElementById('cfImg1');
-    const img2    = document.getElementById('cfImg2');
-    const img3    = document.getElementById('cfImg3');
+  /* ── Carrusel de fotos ── */
+  (function initCarousel(){
+    const slides  = document.querySelectorAll('.gal-slide');
+    const dots    = document.querySelectorAll('.gal-dot');
+    const prevBtn = document.querySelector('.gal-prev');
+    const nextBtn = document.querySelector('.gal-next');
+    let   current = 0;
+    let   timer;
 
-    function update(){
-      const rect  = sgal.getBoundingClientRect();
-      const vh    = window.innerHeight;
-      const range = rect.height - vh;
-
-      if (rect.top >= vh || rect.bottom <= 0){
-        overlay.style.opacity = '0';
-        return;
-      }
-      overlay.style.opacity = '1';
-
-      const p = Math.max(0, Math.min(1, -rect.top / range));
-
-      img1.style.opacity = p < 0.33 ? 1 : p < 0.50 ? 1 - (p - 0.33) / 0.17 : 0;
-      img2.style.opacity = p < 0.33 ? 0 : p < 0.50 ? (p - 0.33) / 0.17 : p < 0.67 ? 1 : p < 0.84 ? 1 - (p - 0.67) / 0.17 : 0;
-      img3.style.opacity = p < 0.67 ? 0 : p < 0.84 ? (p - 0.67) / 0.17 : 1;
+    function goTo(n){
+      slides[current].classList.remove('active');
+      dots[current].classList.remove('active');
+      current = ((n % slides.length) + slides.length) % slides.length;
+      slides[current].classList.add('active');
+      dots[current].classList.add('active');
     }
 
-    window.addEventListener('scroll', update, { passive: true });
-    update();
+    function resetTimer(){
+      clearInterval(timer);
+      timer = setInterval(() => goTo(current + 1), 4000);
+    }
+
+    /* Swipe táctil */
+    let startX = 0;
+    const carousel = document.getElementById('galCarousel');
+    carousel.addEventListener('touchstart', e => { startX = e.touches[0].clientX; }, { passive: true });
+    carousel.addEventListener('touchend',   e => {
+      const dx = e.changedTouches[0].clientX - startX;
+      if (Math.abs(dx) > 40){ goTo(current + (dx < 0 ? 1 : -1)); resetTimer(); }
+    }, { passive: true });
+
+    prevBtn.addEventListener('click', () => { goTo(current - 1); resetTimer(); });
+    nextBtn.addEventListener('click', () => { goTo(current + 1); resetTimer(); });
+    dots.forEach((d, i) => d.addEventListener('click', () => { goTo(i); resetTimer(); }));
+
+    resetTimer();
   })();
 
   ScrollTrigger.refresh();
