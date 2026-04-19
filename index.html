@@ -103,8 +103,6 @@ body{
   display:flex;justify-content:center;
   padding:20px 0;
   background:var(--bg);
-  -webkit-mask-image:linear-gradient(to bottom,transparent 0%,black 28%,black 72%,transparent 100%);
-  mask-image:linear-gradient(to bottom,transparent 0%,black 28%,black 72%,transparent 100%);
 }
 .ornament svg{width:260px;height:64px}
 .ornament--surface{background:var(--surface)}
@@ -173,11 +171,18 @@ body{
 .fecha-rule--r{background:linear-gradient(to left,transparent,var(--accent))}
 .fecha-main{font-family:'Cormorant Garamond',serif;font-size:18px;letter-spacing:4px;text-transform:uppercase;color:var(--dark);white-space:nowrap}
 
-/* ── SECTION FADES (top & bottom blur) ── */
-#countdown,#ubicacion,#dresscode{
-  -webkit-mask-image:linear-gradient(to bottom,transparent 0%,black 9%,black 91%,transparent 100%);
-  mask-image:linear-gradient(to bottom,transparent 0%,black 9%,black 91%,transparent 100%);
+/* ── SECTION FADES — pseudo-overlay (sin fondo del body sangrando) ── */
+#countdown::before,#countdown::after,
+#ubicacion::before,#ubicacion::after,
+#dresscode::before,#dresscode::after{
+  content:'';position:absolute;left:0;right:0;height:62px;pointer-events:none;z-index:3;
 }
+#countdown::before{top:0;background:linear-gradient(to bottom,var(--surface),transparent)}
+#countdown::after {bottom:0;background:linear-gradient(to top,  var(--surface),transparent)}
+#ubicacion::before{top:0;background:linear-gradient(to bottom,var(--surface),transparent)}
+#ubicacion::after {bottom:0;background:linear-gradient(to top,  var(--surface),transparent)}
+#dresscode::before{top:0;background:linear-gradient(to bottom,var(--surface),transparent)}
+#dresscode::after {bottom:0;background:linear-gradient(to top,  var(--surface),transparent)}
 
 /* ── COUNTDOWN ── */
 #countdown{padding:64px 28px;background:var(--surface);text-align:center}
@@ -287,8 +292,21 @@ body{
 .btn-map:hover{background:var(--accent)}
 .btn-map svg{width:16px;height:16px;fill:currentColor;flex-shrink:0}
 
-/* ── CALENDAR ── */
-#calendar{padding:0 28px 64px;background:var(--surface);text-align:center}
+/* ── CALENDAR (integrado en ubicacion) ── */
+.loc-cal-divider{
+  width:40px;height:1px;
+  background:linear-gradient(to right,transparent,var(--accent),transparent);
+  margin:28px auto 20px;
+}
+.loc-cal-eyebrow{
+  font-family:'Cormorant Garamond',serif;
+  font-style:italic;
+  font-size:12px;
+  letter-spacing:4px;
+  text-transform:uppercase;
+  color:var(--accent);
+  margin-bottom:12px;
+}
 .btn-cal{
   display:inline-flex;align-items:center;gap:8px;
   background:transparent;
@@ -738,10 +756,10 @@ body{
         Ver en Google Maps
       </a>
     </div>
-  </section>
 
-  <!-- ── 9. GUARDAR EN CALENDARIO ── -->
-  <section id="calendar" class="sec sec--bg" style="padding-top:0">
+    <!-- Calendario integrado dentro de Ubicación -->
+    <div class="loc-cal-divider rv"></div>
+    <p class="loc-cal-eyebrow rv">Agenda el día especial</p>
     <a href="https://calendar.google.com/calendar/render?action=TEMPLATE&text=Boda+Lupita+%26+Faisal&dates=20260726T010000Z/20260726T060000Z&details=Ceremonia+19%3A00+hrs+%7C+Recepcion+20%3A00+hrs+Jardin+Castalli&location=Jardin+Castalli+Chihuahua+Mexico"
        target="_blank" rel="noopener" class="btn-cal rv">
       <svg viewBox="0 0 24 24"><path d="M19 3h-1V1h-2v2H8V1H6v2H5C3.89 4 3 4.9 3 6v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V9h14v10zM7 11h5v5H7z"/></svg>
