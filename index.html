@@ -99,7 +99,13 @@ body{
 }
 
 /* ── ORNAMENT ── */
-.ornament{display:flex;justify-content:center;padding:4px 0 0;background:var(--bg)}
+.ornament{
+  display:flex;justify-content:center;
+  padding:20px 0;
+  background:var(--bg);
+  -webkit-mask-image:linear-gradient(to bottom,transparent 0%,black 28%,black 72%,transparent 100%);
+  mask-image:linear-gradient(to bottom,transparent 0%,black 28%,black 72%,transparent 100%);
+}
 .ornament svg{width:260px;height:64px}
 .ornament--surface{background:var(--surface)}
 
