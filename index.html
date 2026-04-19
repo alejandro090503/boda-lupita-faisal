@@ -1363,34 +1363,33 @@ function initEnvelope(){
     /* Ocultar prompt */
     gsap.to(envTap, { opacity: 0, duration: .3 });
 
-    /* Iniciar reproducción del video */
+    /* Arrancar video */
     envVideo.currentTime = 0;
-    const playPromise = envVideo.play();
-    if (playPromise && playPromise.catch) playPromise.catch(() => {});
+    envVideo.play().catch(() => {});
 
-    /* Esperar primer frame real antes de hacer crossfade (evita resplandor) */
-    function doCrossfade(){
-      gsap.to(envImage, {
-        opacity: 0, duration: .65, ease: 'power2.out',
-        onComplete(){ envImage.style.display = 'none'; }
-      });
-      gsap.to(envVideo, {
-        opacity: 1, duration: .65, ease: 'power2.out'
-      });
-    }
-
-    if (envVideo.readyState >= 3){
-      /* Video ya tiene datos suficientes — crossfade inmediato */
-      doCrossfade();
-    } else {
-      /* Esperar al primer frame decodificado */
-      envVideo.addEventListener('canplay', doCrossfade, { once: true });
-    }
-
-    /* Cuando el video se acerca al final → fade blanco */
+    /* Registrar listeners de fin de video */
     envVideo.addEventListener('timeupdate', checkFlash);
-    /* Fallback por si timeupdate llega tarde */
-    envVideo.addEventListener('ended', onVideoEnd);
+    envVideo.addEventListener('ended',      onVideoEnd);
+
+    /* Esperar frame real: currentTime avanza solo cuando hay píxeles reales pintados.
+       Mientras tanto la imagen sigue visible al 100% → sin flash blanco.        */
+    let crossed = false;
+    function waitFrame(){
+      if (crossed) return;
+      if (envVideo.currentTime > 0){
+        crossed = true;
+        gsap.to(envImage, {
+          opacity: 0, duration: .55, ease: 'power2.out',
+          onComplete(){ envImage.style.display = 'none'; }
+        });
+        gsap.to(envVideo, {
+          opacity: 1, duration: .55, ease: 'power2.out'
+        });
+      } else {
+        requestAnimationFrame(waitFrame);
+      }
+    }
+    requestAnimationFrame(waitFrame);
   }
 
   function checkFlash(){
