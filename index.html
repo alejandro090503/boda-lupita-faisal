@@ -58,7 +58,7 @@ body{
 /* ── ENVELOPE OPENING SEQUENCE ── */
 #envelope-screen{
   position:fixed;inset:0;z-index:9000;
-  background:#fff;
+  background:#F7F4F0;
   overflow:hidden;
   cursor:pointer;
 }
@@ -846,7 +846,7 @@ body{
 <!-- ═══════════════════════════════════════════ ENVELOPE OPENING -->
 <div id="envelope-screen">
   <img id="envImage" src="sobre.jpg" alt="Invitación de boda">
-  <video id="envVideo" src="apertura.mp4" muted playsinline preload="auto"></video>
+  <video id="envVideo" src="apertura.mp4" muted playsinline preload="auto" poster="sobre.jpg"></video>
   <div class="env-tap" id="envTap">Toca para abrir</div>
 </div>
 
@@ -1368,14 +1368,24 @@ function initEnvelope(){
     const playPromise = envVideo.play();
     if (playPromise && playPromise.catch) playPromise.catch(() => {});
 
-    /* Crossfade SIMULTÁNEO imagen → video (sin frame negro) */
-    gsap.to(envImage, {
-      opacity: 0, duration: .7, ease: 'power2.out',
-      onComplete(){ envImage.style.display = 'none'; }
-    });
-    gsap.to(envVideo, {
-      opacity: 1, duration: .7, ease: 'power2.out'
-    });
+    /* Esperar primer frame real antes de hacer crossfade (evita resplandor) */
+    function doCrossfade(){
+      gsap.to(envImage, {
+        opacity: 0, duration: .65, ease: 'power2.out',
+        onComplete(){ envImage.style.display = 'none'; }
+      });
+      gsap.to(envVideo, {
+        opacity: 1, duration: .65, ease: 'power2.out'
+      });
+    }
+
+    if (envVideo.readyState >= 3){
+      /* Video ya tiene datos suficientes — crossfade inmediato */
+      doCrossfade();
+    } else {
+      /* Esperar al primer frame decodificado */
+      envVideo.addEventListener('canplay', doCrossfade, { once: true });
+    }
 
     /* Cuando el video se acerca al final → fade blanco */
     envVideo.addEventListener('timeupdate', checkFlash);
