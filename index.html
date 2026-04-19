@@ -144,6 +144,41 @@ body{
   margin-bottom:4px;
 }
 
+/* ── SCROLL HINT ── */
+.scroll-hint{
+  position:absolute;
+  bottom:28px;left:50%;
+  transform:translateX(-50%);
+  z-index:3;
+  display:flex;flex-direction:column;align-items:center;gap:6px;
+  opacity:1;
+  transition:opacity .6s ease;
+}
+.scroll-hint.hidden{opacity:0;pointer-events:none}
+.scroll-hint-txt{
+  font-family:'Cormorant Garamond',serif;
+  font-style:italic;
+  font-size:11px;
+  letter-spacing:4px;
+  text-transform:uppercase;
+  color:var(--dark);
+  opacity:.65;
+}
+.scroll-hint-arrow{
+  display:flex;
+  animation:scrollbounce 1.6s ease-in-out infinite;
+}
+.scroll-hint-arrow svg{
+  width:22px;height:22px;
+  stroke:var(--accent);stroke-width:1.8;
+  fill:none;stroke-linecap:round;stroke-linejoin:round;
+  opacity:.8;
+}
+@keyframes scrollbounce{
+  0%,100%{transform:translateY(0)}
+  50%{transform:translateY(7px)}
+}
+
 /* ── ORNAMENT ── */
 .ornament{
   display:flex;justify-content:center;
@@ -700,6 +735,12 @@ body{
       <span class="hero-amp rv">&amp;</span>
       <span class="hero-groom rv">Faisal</span>
     </div>
+    <div class="scroll-hint" id="scrollHint">
+      <span class="scroll-hint-txt">Desliza</span>
+      <span class="scroll-hint-arrow">
+        <svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+      </span>
+    </div>
   </section>
 
   <!-- ── ORNAMENTO A ── -->
@@ -1034,17 +1075,6 @@ body{
         </select>
       </div>
       <div class="rsvp-field">
-        <label for="rsvpGuests">Número de personas</label>
-        <select id="rsvpGuests">
-          <option>1</option>
-          <option>2</option>
-          <option>3</option>
-          <option>4</option>
-          <option>5</option>
-          <option>6</option>
-        </select>
-      </div>
-      <div class="rsvp-field">
         <label for="rsvpMsg">Mensaje para los novios</label>
         <textarea id="rsvpMsg" placeholder="Escribe algo especial para Lupita &amp; Faisal…"></textarea>
       </div>
@@ -1304,17 +1334,15 @@ function initEnvelope(){
 
 /* ─────────────── RSVP → WHATSAPP ─────────────── */
 function sendRsvp(){
-  const name    = document.getElementById('rsvpName').value.trim()    || '(sin nombre)';
+  const name    = document.getElementById('rsvpName').value.trim() || '(sin nombre)';
   const attend  = document.getElementById('rsvpAttend').value;
-  const guests  = document.getElementById('rsvpGuests').value;
-  const message = document.getElementById('rsvpMsg').value.trim()     || '—';
+  const message = document.getElementById('rsvpMsg').value.trim()  || '—';
 
   const text = [
     '¡Hola Lupita & Faisal! 🌸',
     '',
     `*Nombre:* ${name}`,
     `*Asistencia:* ${attend}`,
-    `*Personas:* ${guests}`,
     `*Mensaje:* ${message}`
   ].join('\n');
 
@@ -1394,6 +1422,13 @@ function initAll(){
 
     resetTimer();
   })();
+
+  /* Ocultar scroll hint al primer scroll */
+  const scrollHint = document.getElementById('scrollHint');
+  if (scrollHint){
+    const hideHint = () => { scrollHint.classList.add('hidden'); window.removeEventListener('scroll', hideHint); };
+    window.addEventListener('scroll', hideHint, { passive: true });
+  }
 
   ScrollTrigger.refresh();
 
