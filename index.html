@@ -59,8 +59,8 @@ body{
 }
 
 /* ── PETALS ── */
-#petals{position:fixed;inset:0;z-index:20;pointer-events:none;overflow:hidden}
-.petal{position:absolute;border-radius:50% 0 50% 0;top:-40px}
+#petals{position:fixed;inset:0;z-index:20;pointer-events:none}
+.petal{position:fixed;border-radius:50% 0 50% 0;top:-40px}
 
 /* ── WRAP ── */
 .wrap{
@@ -171,6 +171,12 @@ body{
   text-transform:uppercase;
   color:var(--dark);
   white-space:nowrap;
+}
+
+/* ── SECTION FADES (top & bottom blur) ── */
+#countdown,#ubicacion,#dresscode{
+  -webkit-mask-image:linear-gradient(to bottom,transparent 0%,black 9%,black 91%,transparent 100%);
+  mask-image:linear-gradient(to bottom,transparent 0%,black 9%,black 91%,transparent 100%);
 }
 
 /* ── COUNTDOWN ── */
@@ -1008,7 +1014,7 @@ gsap.registerPlugin(ScrollTrigger);
     ].join(';');
     wrap.appendChild(p);
 
-    const dur = 50 + Math.random() * 35;
+    const dur = 34 + Math.random() * 22;
     gsap.fromTo(p,
       { y: -40, rotation: Math.random() * 360, x: 0 },
       {
