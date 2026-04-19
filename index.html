@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width,initial-scale=1,shrink-to-fit=no,viewport-fit=cover">
 <title>Lupita &amp; Faisal · 25 Julio 2026</title>
 <meta name="description" content="Invitación digital — Boda Lupita &amp; Faisal · 25 de julio 2026 · Jardín Castallia, Chihuahua">
 <meta property="og:type"        content="website">
@@ -35,12 +35,15 @@
 /* ── RESET ── */
 *{margin:0;padding:0;box-sizing:border-box}
 html,body{overflow-x:hidden;max-width:100vw}
+a,button,input,select,textarea{touch-action:manipulation}
 html{scroll-behavior:auto}
 body{
   background:var(--bg);
   color:var(--text);
   font-family:'Lato',sans-serif;
   font-weight:300;
+  -webkit-text-size-adjust:100%;
+  text-size-adjust:100%;
 }
 
 /* ── LOADER (reemplazado por secuencia de sobre — mantenido como función no auto-ejecutable) ── */
@@ -127,7 +130,7 @@ body{
 .wrap{
   max-width:430px;
   margin:0 auto;
-  overflow:clip;
+  overflow:hidden;
   position:relative;
   z-index:1;
   visibility:hidden;
@@ -163,7 +166,7 @@ body{
 /* ── SCROLL HINT ── */
 .scroll-hint{
   position:absolute;
-  bottom:36px;left:50%;
+  bottom:14px;left:50%;
   transform:translateX(-50%);
   z-index:3;
   display:flex;flex-direction:column;align-items:center;gap:12px;
@@ -221,6 +224,7 @@ body{
 /* ── HERO ── */
 #hero{
   position:relative;
+  height:100vh;
   height:100dvh;
   min-height:600px;
   display:flex;
@@ -240,6 +244,7 @@ body{
 .hero-content{position:relative;z-index:2;text-align:center;padding:0 24px}
 .hero-bride{
   font-family:'Great Vibes',cursive;
+  font-size:80px;
   font-size:clamp(68px,21vw,90px);
   color:var(--dark);
   line-height:1;
@@ -255,6 +260,7 @@ body{
 }
 .hero-groom{
   font-family:'Great Vibes',cursive;
+  font-size:80px;
   font-size:clamp(68px,21vw,90px);
   color:var(--dark);
   line-height:1;
@@ -650,7 +656,7 @@ body{
   padding:12px 14px;
   font-family:'Lato',sans-serif;
   font-weight:300;
-  font-size:15px;
+  font-size:16px;
   color:var(--text);
   outline:none;
   transition:border-color .2s;
