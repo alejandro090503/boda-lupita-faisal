@@ -491,22 +491,19 @@ body{
 
 /* ── GALLERY CROSSFADE ── */
 #sgal{height:300vh}
-.cf-frame{
-  position:sticky;
-  top:0;
-  height:100dvh;
-  overflow:hidden;
+#gal-overlay{
+  position:fixed;inset:0;
+  z-index:16;
+  opacity:0;
+  pointer-events:none;
+  background:var(--bg);
 }
-.cf-img{
-  position:absolute;
-  inset:0;
+.gal-img{
+  position:absolute;inset:0;
   width:100%;height:100%;
-  object-fit:cover;
-  object-position:center;
+  object-fit:cover;object-position:center;
+  will-change:opacity;
 }
-.cf-img--1{z-index:3;opacity:1;background:var(--surface)}
-.cf-img--2{z-index:2;opacity:0;background:var(--accent)}
-.cf-img--3{z-index:1;opacity:1;background:var(--dark)}
 .cf-fade-t{
   position:absolute;top:0;left:0;right:0;height:22%;
   background:linear-gradient(to bottom,#F7F4F0,transparent);
@@ -942,16 +939,8 @@ body{
     <p class="dc-avoid rv">Evitar: Blanco &middot; Beige &middot; Rojo &mdash; reservados para los novios</p>
   </section>
 
-  <!-- ── 13. GALERÍA CROSSFADE ── -->
-  <div id="sgal">
-    <div class="cf-frame">
-      <img class="cf-img cf-img--1" id="cfImg1" src="foto1.jpg" alt="Foto de los novios 1">
-      <img class="cf-img cf-img--2" id="cfImg2" src="foto2.jpg" alt="Foto de los novios 2">
-      <img class="cf-img cf-img--3" id="cfImg3" src="foto3.jpg" alt="Foto de los novios 3">
-      <div class="cf-fade-t"></div>
-      <div class="cf-fade-b"></div>
-    </div>
-  </div>
+  <!-- ── 13. GALERÍA CROSSFADE (spacer; overlay fixed fuera del .wrap) ── -->
+  <div id="sgal"></div>
 
   <!-- ── ORNAMENTO B ── -->
   <div class="ornament rv">
@@ -1013,6 +1002,15 @@ body{
 
 </div><!-- /.wrap -->
 
+<!-- ── GALERÍA OVERLAY (fixed, fuera del .wrap) ── -->
+<div id="gal-overlay">
+  <img class="gal-img" id="cfImg1" src="foto1.jpg" alt="Foto de los novios 1" style="opacity:1">
+  <img class="gal-img" id="cfImg2" src="foto2.jpg" alt="Foto de los novios 2" style="opacity:0">
+  <img class="gal-img" id="cfImg3" src="foto3.jpg" alt="Foto de los novios 3" style="opacity:0">
+  <div class="cf-fade-t"></div>
+  <div class="cf-fade-b"></div>
+</div>
+
 <!-- ── MUSIC FAB ── -->
 <button class="music-fab" id="musicFab" aria-label="Reproducir música de fondo" title="Alicia Keys — If I Ain't Got You">
   <svg class="ic-play" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
@@ -1030,8 +1028,9 @@ body{
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js" crossorigin="anonymous"></script>
 <script>
 /* ─────────────── INIT ─────────────── */
-window.scrollTo(0, 0);
 history.scrollRestoration = 'manual';
+window.scrollTo(0, 0);
+window.addEventListener('beforeunload', () => window.scrollTo(0, 0));
 gsap.registerPlugin(ScrollTrigger);
 
 /* ─────────────── LOADER (función nombrada, sin auto-ejecución — reemplazada por envelope) ─────────────── */
@@ -1304,44 +1303,35 @@ function initAll(){
     );
   });
 
-  /* ── Galería crossfade ── */
-  const img1 = document.getElementById('cfImg1');
-  const img2 = document.getElementById('cfImg2');
-  const img3 = document.getElementById('cfImg3');
+  /* ── Galería crossfade (scroll directo sobre overlay fixed) ── */
+  (function initGallery(){
+    const sgal    = document.getElementById('sgal');
+    const overlay = document.getElementById('gal-overlay');
+    const img1    = document.getElementById('cfImg1');
+    const img2    = document.getElementById('cfImg2');
+    const img3    = document.getElementById('cfImg3');
 
-  ScrollTrigger.create({
-    trigger: '#sgal',
-    start: 'top top',
-    end: 'bottom bottom',
-    scrub: 1,
-    onUpdate(self){
-      const p = self.progress;
+    function update(){
+      const rect  = sgal.getBoundingClientRect();
+      const vh    = window.innerHeight;
+      const range = rect.height - vh;
 
-      if (p < 0.25){
-        gsap.set(img1, { opacity: 1, zIndex: 3 });
-        gsap.set(img2, { opacity: 0, zIndex: 2 });
-        gsap.set(img3, { opacity: 1, zIndex: 1 });
-      } else if (p < 0.45){
-        const t = (p - 0.25) / 0.20;
-        gsap.set(img1, { opacity: 1 - t, zIndex: 3 });
-        gsap.set(img2, { opacity: t,     zIndex: 4 });
-        gsap.set(img3, { opacity: 1,     zIndex: 1 });
-      } else if (p < 0.65){
-        gsap.set(img1, { opacity: 0, zIndex: 2 });
-        gsap.set(img2, { opacity: 1, zIndex: 4 });
-        gsap.set(img3, { opacity: 1, zIndex: 1 });
-      } else if (p < 0.85){
-        const t = (p - 0.65) / 0.20;
-        gsap.set(img1, { opacity: 0, zIndex: 1 });
-        gsap.set(img2, { opacity: 1 - t, zIndex: 4 });
-        gsap.set(img3, { opacity: t,     zIndex: 5 });
-      } else {
-        gsap.set(img1, { opacity: 0, zIndex: 1 });
-        gsap.set(img2, { opacity: 0, zIndex: 2 });
-        gsap.set(img3, { opacity: 1, zIndex: 5 });
+      if (rect.top >= vh || rect.bottom <= 0){
+        overlay.style.opacity = '0';
+        return;
       }
+      overlay.style.opacity = '1';
+
+      const p = Math.max(0, Math.min(1, -rect.top / range));
+
+      img1.style.opacity = p < 0.33 ? 1 : p < 0.50 ? 1 - (p - 0.33) / 0.17 : 0;
+      img2.style.opacity = p < 0.33 ? 0 : p < 0.50 ? (p - 0.33) / 0.17 : p < 0.67 ? 1 : p < 0.84 ? 1 - (p - 0.67) / 0.17 : 0;
+      img3.style.opacity = p < 0.67 ? 0 : p < 0.84 ? (p - 0.67) / 0.17 : 1;
     }
-  });
+
+    window.addEventListener('scroll', update, { passive: true });
+    update();
+  })();
 
   ScrollTrigger.refresh();
 
