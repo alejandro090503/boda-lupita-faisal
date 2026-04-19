@@ -163,36 +163,48 @@ body{
 /* ── SCROLL HINT ── */
 .scroll-hint{
   position:absolute;
-  bottom:28px;left:50%;
+  bottom:36px;left:50%;
   transform:translateX(-50%);
   z-index:3;
-  display:flex;flex-direction:column;align-items:center;gap:6px;
+  display:flex;flex-direction:column;align-items:center;gap:12px;
   opacity:1;
-  transition:opacity .6s ease;
+  transition:opacity .7s ease;
+  white-space:nowrap;
 }
 .scroll-hint.hidden{opacity:0;pointer-events:none}
 .scroll-hint-txt{
   font-family:'Cormorant Garamond',serif;
   font-style:italic;
-  font-size:11px;
-  letter-spacing:4px;
+  font-size:14px;
+  letter-spacing:9px;
+  padding-left:9px;
   text-transform:uppercase;
   color:var(--dark);
-  opacity:.65;
+  display:flex;align-items:center;gap:14px;
+}
+.scroll-hint-txt::before,
+.scroll-hint-txt::after{
+  content:'';
+  display:block;
+  width:28px;height:1px;
+  background:linear-gradient(to right,transparent,var(--accent));
+  opacity:.7;
+}
+.scroll-hint-txt::after{
+  background:linear-gradient(to left,transparent,var(--accent));
 }
 .scroll-hint-arrow{
   display:flex;
-  animation:scrollbounce 1.6s ease-in-out infinite;
+  animation:scrollbounce 1.8s ease-in-out infinite;
 }
 .scroll-hint-arrow svg{
-  width:22px;height:22px;
-  stroke:var(--accent);stroke-width:1.8;
+  width:28px;height:28px;
+  stroke:var(--accent);stroke-width:1.6;
   fill:none;stroke-linecap:round;stroke-linejoin:round;
-  opacity:.8;
 }
 @keyframes scrollbounce{
   0%,100%{transform:translateY(0)}
-  50%{transform:translateY(7px)}
+  50%{transform:translateY(9px)}
 }
 
 /* ── ORNAMENT ── */
