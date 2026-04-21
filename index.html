@@ -795,9 +795,21 @@ body{
 .footer-hr{
   width:60px;height:1px;
   background:var(--accent);
-  margin:24px auto 0;
+  margin:24px auto 16px;
   opacity:.4;
 }
+.footer-credit{
+  font-family:'Lato',sans-serif;
+  font-weight:300;
+  font-size:11px;
+  letter-spacing:2px;
+  color:var(--accent);
+  opacity:.45;
+  text-decoration:none;
+  display:block;
+  transition:opacity .3s;
+}
+.footer-credit:hover{opacity:.75}
 
 /* ── MUSIC FAB ── */
 .music-fab{
@@ -1276,6 +1288,7 @@ body{
     <div class="footer-names rv">Lupita &amp; Faisal</div>
     <div class="footer-date rv">25 &middot; Julio &middot; MMXXVI</div>
     <div class="footer-hr"></div>
+    <a href="https://www.instagram.com/elysium.invitaciones" target="_blank" rel="noopener" class="footer-credit">@elysium.invitaciones</a>
   </footer>
 
 </div><!-- /.wrap -->
